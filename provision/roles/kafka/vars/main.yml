@@ -1,0 +1,12 @@
+kafka_url: http://apache.uvigo.es/kafka/0.10.2.0/kafka_2.12-0.10.2.0.tgz
+kafka_filename: kafka_2.12-0.10.2.0.tgz
+kafka_folder: kafka_2.12-0.10.2.0
+kafka_download_path: /tmp
+
+app_dir: /apps/kafka
+conf_dir: /apps/kafka/kafka_2.12-0.10.2.0/config
+app_user: kafka
+app_group: kafka
+log_dir: /apps/logs
+data_dir: /apps/data
+app_port: 2181

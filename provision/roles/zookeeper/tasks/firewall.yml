@@ -1,0 +1,4 @@
+---
+- name: Allow connectivity to port {{ app_port }}
+  iptables_raw:
+    rules: "-A INPUT -p tcp -m tcp --dport {{ app_port }} -j ACCEPT"

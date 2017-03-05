@@ -1,0 +1,6 @@
+---
+- name: Install all necesary dependencies
+  package:
+    name: libselinux-python
+    state: present
+  become: true

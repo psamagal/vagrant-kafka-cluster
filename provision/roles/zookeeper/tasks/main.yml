@@ -1,0 +1,6 @@
+---
+- include: dependencies.yml
+
+- include: deploy.yml
+
+#- include: firewall.yml

@@ -1,0 +1,13 @@
+zookeeper_url: http://apache.rediris.es/zookeeper/stable/zookeeper-3.4.9.tar.gz
+zookeeper_filename: zookeeper-3.4.9.tar.gz
+zookeeper_folder: zookeeper-3.4.9
+zookeeper_download_path: /tmp
+app_dir: /apps/zookeeper
+conf_dir: /apps/zookeeper/zookeeper-3.4.9/conf
+app_name: zookeeper
+app_user: zookeeper
+app_group: zookeeper
+log_dir: /apps/logs
+data_dir: /apps/data
+
+app_port: 2181

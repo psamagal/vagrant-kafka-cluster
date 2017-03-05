@@ -1,0 +1,70 @@
+---
+- name: get Kafka-manager tarball
+  get_url:
+    url:     "{{ kafkamanager_url }}"
+    dest:    "{{ kafkamanager_download_path }}"
+    validate_certs: false
+  become: true
+
+- name: Ensure group '{{app_group}}' is present
+  group:
+    name: "{{app_group}}"
+    state: present
+  become: true
+
+- name: Ensure user '{{app_user}}' is present
+  user:
+    name: "{{ app_user }}"
+    comment: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: true
+
+- name: Ensure '{{ app_dir }}' folder is present
+  file:
+    path: "{{ app_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    state: directory
+  become: true
+
+
+- name: Ensure '{{ log_dir }}' folder is present
+  file:
+    path: "{{ log_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    state: directory
+  become: true
+
+- name: Ensure '{{ data_dir }}' folder is present
+  file:
+    path: "{{ data_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    state: directory
+  become: true
+
+- name: unpack archive
+  unarchive:
+    src: "{{ kafkamanager_download_path }}/{{kafkamanager_filename}}"
+    dest: "{{ app_dir }}"
+    remote_src: true
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: true
+
+- name: Setup configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ conf_dir }}/{{ item.dest }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  with_items:
+    - { src: application.conf.j2, dest: application.conf }
+  become: true
+
+#- name: startup kafka
+#  command: "{{ app_dir }}/{{ kafkamanager_folder }}/bin/kafka-manager&"
+#  become: true
+#  become_user: "{{ app_user }}"
+

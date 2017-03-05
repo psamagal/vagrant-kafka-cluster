@@ -1,0 +1,82 @@
+---
+- name: get Kafka tarball
+  get_url:
+    url:     "{{ kafka_url }}"
+    dest:    "{{ kafka_download_path }}"
+    validate_certs: false
+  become: true
+
+- name: Ensure group '{{app_group}}' is present
+  group:
+    name: "{{app_group}}"
+    state: present
+  become: true
+
+- name: Ensure user '{{app_user}}' is present
+  user:
+    name: "{{ app_user }}"
+    comment: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: true
+
+- name: Ensure '{{ app_dir }}' folder is present
+  file:
+    path: "{{ app_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    state: directory
+  become: true
+
+
+- name: Ensure '{{ log_dir }}' folder is present
+  file:
+    path: "{{ log_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    state: directory
+  become: true
+
+- name: Ensure '{{ data_dir }}' folder is present
+  file:
+    path: "{{ data_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    state: directory
+  become: true
+  
+- name: unpack archive
+  unarchive:
+    src: "{{ kafka_download_path }}/{{kafka_filename}}"
+    dest: "{{ app_dir }}"
+    remote_src: true
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: true
+
+- name: Setup configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ conf_dir }}/{{ item.dest }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  with_items:
+    - { src: server.properties.j2, dest: server.properties }
+    - { src: log4j.properties.j2, dest: log4j.properties }
+  become: true
+
+- name: log folder link
+  file:
+    src: "{{ log_dir }}"
+    dest: "{{ app_dir }}/{{ kafka_folder }}/logs"
+    state: link
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: true
+
+- name: startup kafka
+  command: "{{ app_dir }}/{{ kafka_folder }}/bin/kafka-server-start.sh {{ conf_dir }}/server.properties"
+  async: 15
+  poll: 0
+  become: true
+  become_user: "{{ app_user }}"
+
